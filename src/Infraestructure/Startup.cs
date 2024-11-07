@@ -31,7 +31,11 @@ namespace Infraestructure
                     .AddCorsPolicy();
 
             // Agrega aquí el servicio IColaboradoresService y su implementación
+            // Agrega aquí el servicio IAdministrativoService y su implementación
+            // Agrega aquí el servicio IProfesorService y su implementación
             services.AddScoped<IColaboradoresService, ColaboradoresService>();
+            services.AddScoped<IAdministrativoService, AdministrativoService>();
+            services.AddScoped<IProfesorService, ProfesorService>();
 
             return services;
         }

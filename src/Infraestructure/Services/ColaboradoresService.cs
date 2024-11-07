@@ -6,6 +6,7 @@ using AutoMapper;
 using DevExpress.XtraRichEdit.Import.Html;
 using Domain.Entities;
 using Infraestructure.Persistence;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infraestructure.Services
@@ -14,8 +15,9 @@ namespace Infraestructure.Services
     {
         private readonly ApplicationDbContext _dbContext;
         private readonly IMapper _mapper;
+        private readonly IMediator _mediator;
 
-        public ColaboradoresService(ApplicationDbContext dbContext, IMapper mapper)
+        public ColaboradoresService(ApplicationDbContext dbContext, IMapper mapper, IMediator mediator)
         {
             _dbContext = dbContext;
             _mapper = mapper;
@@ -43,7 +45,7 @@ namespace Infraestructure.Services
         //}
 
 
-        public async Task<IEnumerable<Colaboradores>> GetColaboradoresFilteredAsync(DateTime? fechaInicio, DateTime? fechaFin, bool? isProfesor)
+        public async Task<IEnumerable<Colaboradores>> GetColaboradoresFilteredAsync(DateTime? fechaInicio, DateTime? fechaFin, bool? isProfesor, int? edad)
         {
             var query = _dbContext.Colaboradores.AsQueryable();
 
@@ -62,14 +64,17 @@ namespace Infraestructure.Services
                 query = query.Where(c => c.IsProfesor == isProfesor.Value);
             }
 
+            if (edad.HasValue)
+            {
+                query = query.Where(c => c.Edad == edad.Value);
+            }
+
             // Log de la consulta generada
             var sql = query.ToQueryString(); // Solo disponible en EF Core 5 o superior
             Console.WriteLine($"Consulta SQL: {sql}");
 
             return await query.ToListAsync();
         }
-
-
 
         public async Task<ColaboradorDTO> CreateAsync(ColaboradoresCreateCommand command)
         {
@@ -82,6 +87,32 @@ namespace Infraestructure.Services
 
             // Devuelve el colaborador creado como DTO
             return _mapper.Map<ColaboradorDTO>(colaborador);
+        }
+
+        public async Task<bool> UpdateColaboradorAsync(Colaboradores colaborador)
+        {
+            var existingColaborador = await _dbContext.Colaboradores.FindAsync(colaborador.Id);
+            if (existingColaborador == null) return false;
+
+            existingColaborador.Nombre = colaborador.Nombre;
+            existingColaborador.Edad = colaborador.Edad;
+            existingColaborador.BirthDate = colaborador.BirthDate;
+            existingColaborador.IsProfesor = colaborador.IsProfesor;
+            existingColaborador.FechaCreacion = colaborador.FechaCreacion;
+
+            _dbContext.Colaboradores.Update(existingColaborador);
+            return await _dbContext.SaveChangesAsync() > 0;
+        }
+
+        public async Task<bool> DeleteColaboradorAsync(int id)
+        {
+            // Lógica de eliminación del colaborador
+            var colaborador = await _dbContext.Colaboradores.FindAsync(id);
+            if (colaborador == null) return false;
+
+            _dbContext.Colaboradores.Remove(colaborador);
+            await _dbContext.SaveChangesAsync();
+            return true;
         }
     }
 }
