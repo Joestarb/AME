@@ -1,7 +1,9 @@
-﻿using Infraestructure.Auth;
+﻿using ApplicationCore.Interfaces;
+using Infraestructure.Auth;
 using Infraestructure.Cors;
 using Infraestructure.EventHandlers;
 using Infraestructure.Persistence;
+using Infraestructure.Services;
 using Infraestructure.Settings;
 using Infraestructure.Tenant;
 using Infrastructure.Middleware;
@@ -15,6 +17,7 @@ namespace Infraestructure
     {
         public static IServiceCollection AddInfraestructure(this IServiceCollection services, IConfiguration configuration)
         {
+
             services.AddSwagger(configuration)
                     .AddSettings(configuration)
                     .AddHttpContextAccessor()
@@ -26,6 +29,10 @@ namespace Infraestructure
                     .AddJwt(configuration)
                     .AddEventHandlers()
                     .AddCorsPolicy();
+
+            // Agrega aquí el servicio IColaboradoresService y su implementación
+            services.AddScoped<IColaboradoresService, ColaboradoresService>();
+
             return services;
         }
 

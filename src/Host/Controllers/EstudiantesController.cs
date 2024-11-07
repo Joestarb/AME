@@ -27,8 +27,20 @@ namespace Host.Controllers
             return Ok(result);
         }
 
+        // Obtener estudiante por ID - GET
+        [HttpGet("getEstudiante/{id}")]
+        public async Task<IActionResult> GetEstudiante(int id)
+        {
+            var estudiante = await _service.GetEstudianteById(id);
+            if (estudiante == null)
+                return NotFound();
+
+            return Ok(new { succeeded = true, result = estudiante });
+        }
+
+
         // Crear estudiante - POST
-        [HttpPost("create")]
+        [HttpPost("createEstudiante")]
         public async Task<ActionResult<Response<int>>> CreateEstudiantes(EstudianteCreateCommand command)
         {
             var result = await _mediator.Send(command);
@@ -36,7 +48,7 @@ namespace Host.Controllers
         }
 
         // Actualizar estudiante - PUT
-        [HttpPut("update/{id}")]
+        [HttpPut("updateEstudiante/{id}")]
         public async Task<ActionResult<Response<int>>> UpdateEstudiante(int id, UpdateEstudianteCommand command)
         {
             if (id != command.Id)
@@ -50,7 +62,7 @@ namespace Host.Controllers
         }
 
         // Eliminar estudiante - DELETE
-        [HttpDelete("delete/{id}")]
+        [HttpDelete("deleteEstudiante/{id}")]
         public async Task<ActionResult<Response<int>>> DeleteEstudiante(int id)
         {
             var result = await _mediator.Send(new DeleteEstudianteCommand { Id = id });
@@ -58,6 +70,14 @@ namespace Host.Controllers
                 return NotFound(result.Message);
 
             return Ok(result);
+        }
+
+        // PDF
+        [HttpGet("pdf")]
+        public async Task<ActionResult> GetPDF()
+        {
+            var pdffile = await _service.GetPDF();
+            return File(pdffile, "application/pdf", "Reporte.pdf");
         }
     }
 }

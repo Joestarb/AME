@@ -1,4 +1,6 @@
-﻿using ApplicationCore.Wrappers;
+﻿using ApplicationCore.Commands;
+using ApplicationCore.Wrappers;
+using Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +12,9 @@ namespace ApplicationCore.Interfaces
     public interface IEstudiantesService
     {
         Task<Response<object>> GetEstudiantes();
+        Task<Response<Estudiantes>> GetEstudianteById(int id);
+        Task<Response<int>> UpdateEstudiante(UpdateEstudianteCommand command);
+        Task<byte[]> GetPDF();
 
     }
 }
