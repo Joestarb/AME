@@ -72,12 +72,6 @@ namespace Host.Controllers
             return Ok(result);
         }
 
-        // PDF
-        [HttpGet("pdf")]
-        public async Task<ActionResult> GetPDF()
-        {
-            var pdffile = await _service.GetPDF();
-            return File(pdffile, "application/pdf", "Reporte.pdf");
-        }
+
     }
 }
