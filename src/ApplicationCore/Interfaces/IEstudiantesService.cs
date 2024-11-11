@@ -14,7 +14,6 @@ namespace ApplicationCore.Interfaces
         Task<Response<object>> GetEstudiantes();
         Task<Response<Estudiantes>> GetEstudianteById(int id);
         Task<Response<int>> UpdateEstudiante(UpdateEstudianteCommand command);
-        Task<byte[]> GetPDF();
 
     }
 }

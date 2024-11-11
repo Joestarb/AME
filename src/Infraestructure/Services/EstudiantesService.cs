@@ -4,7 +4,7 @@ using ApplicationCore.Interfaces;
 using ApplicationCore.Mappings;
 using ApplicationCore.Wrappers;
 using AutoMapper;
-using DevExpress.DataAccess.ObjectBinding;
+
 using Domain.Entities;
 using Infraestructure.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -61,41 +61,6 @@ namespace Infraestructure.Services
             return new Response<int>(estudiante.Id); // Se retorna el ID del estudiante actualizado
         }
 
-        public async Task<byte[]> GetPDF()
-        {
-            var estudiantes = await _dbContext.Estudiantes
-                .Select(e => new EstudianteDTO
-                {
-                    Id = e.Id,
-                    Nombre = e.Nombre,
-                    Edad = e.Edad,
-                    Correo = e.Correo
-                })
-                .ToListAsync();
-
-            var reportePdf = new EstudiantesDTOPDF
-            {
-                Fecha = DateTime.Now.ToString("dd/MM/yyyy"),
-                Hora = DateTime.Now.ToString("HH:mm"),
-                Estudiantes = estudiantes
-            };
-
-            // Configura el ObjectDataSource
-            ObjectDataSource source = new ObjectDataSource { DataSource = reportePdf };
-
-            // Asigna DataSource y DataMember
-            var report = new ApplicationCore.PDF.EstudiantesPDF
-            {
-                DataSource = source,
-                DataMember = "Estudiantes"  // Indicamos que los datos están en la propiedad "Estudiantes"
-            };
-
-            using (var memory = new MemoryStream())
-            {
-                await report.ExportToPdfAsync(memory);
-                return memory.ToArray();
-            }
-        }
 
 
     }

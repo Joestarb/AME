@@ -3,7 +3,6 @@ using ApplicationCore.DTOs;
 using ApplicationCore.Interfaces;
 using ApplicationCore.Wrappers;
 using AutoMapper;
-using DevExpress.XtraRichEdit.Import.Html;
 using Domain.Entities;
 using Infraestructure.Persistence;
 using MediatR;
